@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+nest_asyncio
+pyngrok
+pandas
+numpy
+scikit-learn
+pymongo
+python-dotenv
