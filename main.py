@@ -4,7 +4,8 @@ from pyngrok import ngrok
 import nest_asyncio
 from pyngrok import ngrok
 import uvicorn
-# model.py
+import asyncio
+import httpx
 import pandas as pd
 import numpy as np
 from pymongo import MongoClient
@@ -120,3 +121,20 @@ def read_root():
 @app.get("/recommend/{email}")
 def recommend(email: str, top_k: Union[int, None] = 15):
     return get_recommendations(email, top_k=top_k)
+
+@app.get("/ping")
+def ping():
+    return {"pinged"}
+
+@app.on_event("startup")
+async def ping_self_periodically():
+    async def ping():
+        while True:
+            try:
+                async with httpx.AsyncClient() as client:
+                    await client.get("https://collaborative-model-for-fyndr.onrender.com/ping") 
+                    print("Pinged successfully")
+            except Exception as e:
+                print(f"Ping failed: {e}")
+            await asyncio.sleep(300) 
+    asyncio.create_task(ping())
